@@ -282,25 +282,12 @@ export default function App() {
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
     const unsub = onSnapshot(q, (snap) => {
       const fetched = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      let finalProducts = [];
-      if (fetched.length > 0) {
-        finalProducts = fetched;
-        setProducts(fetched);
-      } else {
-        finalProducts = [
-          { id: '1', title: 'Classic White T-Shirt', price: 499, originalPrice: 999, discount: 500, categoryId: 'cat1', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=400' },
-          { id: '2', title: 'Premium Running Shoes', price: 1499, originalPrice: 2499, discount: 1000, categoryId: 'cat2', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400' },
-          { id: '3', title: 'Luxury Gold Watch', price: 2999, originalPrice: 5999, discount: 3000, categoryId: 'cat3', image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=400' },
-          { id: '4', title: 'Denim Blue Jeans', price: 899, originalPrice: 1499, discount: 600, categoryId: 'cat4', image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=400' },
-          { id: '5', title: 'Leather Biker Jacket', price: 3499, originalPrice: 5999, discount: 2500, categoryId: 'cat5', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=400' },
-          { id: '6', title: 'Classic Aviator Sunglasses', price: 599, originalPrice: 999, discount: 400, categoryId: 'cat6', image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=400' }
-        ];
-        setProducts(finalProducts);
-      }
+      let finalProducts = fetched;
+      setProducts(fetched);
       setLoadingProducts(false);
       
       if (productId && !hasAutoChecked.current) {
-         const p = finalProducts.find(p => p.id === productId);
+         const p = finalProducts.find((p: any) => p.id === productId);
          if (p) {
             setSelectedProduct(p);
             setView('PRODUCT_DETAILS');
@@ -320,20 +307,7 @@ export default function App() {
       const q = query(collection(db, 'categories'), orderBy('createdAt', 'asc'));
       const snap = await getDocs(q);
       const fetched = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      if (fetched.length > 0) {
-        setCategories(fetched);
-      } else {
-        setCategories([
-          { id: 'cat1', name: 'T-Shirts', image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat2', name: 'Shoes', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat3', name: 'Watches', image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat4', name: 'Jeans', image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat5', name: 'Jackets', image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat6', name: 'Sunglasses', image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat7', name: 'Backpacks', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=200&h=200' },
-          { id: 'cat8', name: 'Hats', image: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&q=80&w=200&h=200' },
-        ]);
-      }
+      setCategories(fetched);
     } catch(err: any) {
       if(err?.message !== "Network Error") console.error(err);
     }

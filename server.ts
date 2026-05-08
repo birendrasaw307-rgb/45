@@ -13,6 +13,17 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Validate required Environment Variables on startup
+  if (!process.env.APP_URL) {
+    console.warn('⚠️ WARNING: APP_URL environment variable is missing.');
+  }
+  if (!process.env.CASHFREE_APP_ID || !process.env.CASHFREE_SECRET_KEY) {
+    console.warn('⚠️ WARNING: Cashfree API keys (CASHFREE_APP_ID, CASHFREE_SECRET_KEY) are missing.');
+  }
+  if (!process.env.SUPABASE_S3_ACCESS_KEY_ID || !process.env.SUPABASE_S3_SECRET_ACCESS_KEY) {
+    console.warn('⚠️ WARNING: Supabase S3 keys are missing.');
+  }
+
   app.use(express.json());
 
   app.get('/api/health', (req, res) => {
