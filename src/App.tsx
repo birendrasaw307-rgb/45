@@ -492,7 +492,8 @@ export default function App() {
 
     } catch (err: any) {
       if(err?.message !== "Network Error") console.error(err);
-      setError(err.response?.data?.error || 'Payment initialization failed');
+      const errMsg = err.response?.data?.details || err.response?.data?.error || err.message || 'Payment initialization failed';
+      setError(errMsg);
       setPaying(false);
     }
   };

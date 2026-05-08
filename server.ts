@@ -21,10 +21,10 @@ async function startServer() {
 
   const s3Client = new S3Client({
     region: 'ap-south-1', // Supabase will ignore region but client requires it
-    endpoint: 'https://lpvmyttlmvfhshqaojgt.supabase.co/storage/v1/s3',
+    endpoint: process.env.SUPABASE_S3_ENDPOINT || 'https://lpvmyttlmvfhshqaojgt.supabase.co/storage/v1/s3',
     credentials: {
-      accessKeyId: '43a6cd3e8879339cc287fd01f6718e49',
-      secretAccessKey: '37232312c01ba9abe019da81ea227dbf42a3643eae004410aca345ba314d065e',
+      accessKeyId: process.env.SUPABASE_S3_ACCESS_KEY_ID || '',
+      secretAccessKey: process.env.SUPABASE_S3_SECRET_ACCESS_KEY || '',
     },
     forcePathStyle: true, // required for Supabase S3
   });
@@ -49,7 +49,8 @@ async function startServer() {
       }));
 
       // Supabase public URL format
-      const publicUrl = `https://lpvmyttlmvfhshqaojgt.supabase.co/storage/v1/object/public/${bucketName}/${fileName}`;
+      const supabaseUrl = process.env.SUPABASE_URL || 'https://lpvmyttlmvfhshqaojgt.supabase.co';
+      const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucketName}/${fileName}`;
       res.json({ url: publicUrl });
     } catch (err: any) {
       console.error('Upload Error:', err);
@@ -106,7 +107,11 @@ async function startServer() {
       res.json(cfRes.data);
     } catch (err: any) {
       console.error('Create Order Error:', err.response?.data || err.message);
-      res.status(500).json({ error: err.response?.data?.message || 'Failed to create order.' });
+      const isAuthError = err.response?.data?.type === 'authentication_error';
+      res.status(isAuthError ? 401 : 500).json({ 
+        error: isAuthError ? 'Cashfree Authentication Failed' : (err.response?.data?.message || 'Failed to create order.'),
+        details: isAuthError ? 'Please ensure your Cashfree App ID and Secret Key in environment variables are correct for the selected environment (Sandbox/Production).' : undefined
+      });
     }
   });
 
@@ -151,7 +156,11 @@ async function startServer() {
       });
     } catch (error: any) {
       console.error('Check Order Error:', error.response?.data || error.message);
-      res.status(500).json({ error: error.response?.data?.message || 'Failed to fetch order details. Please check the ID.' });
+      const isAuthError = error.response?.data?.type === 'authentication_error';
+      res.status(isAuthError ? 401 : 500).json({ 
+        error: isAuthError ? 'Cashfree Authentication Failed' : (error.response?.data?.message || 'Failed to fetch order details. Please check the ID.'),
+        details: isAuthError ? 'Please ensure your Cashfree App ID and Secret Key in environment variables are correct.' : undefined
+      });
     }
   });
 
