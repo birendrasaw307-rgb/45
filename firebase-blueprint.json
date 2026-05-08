@@ -1,0 +1,62 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Stores user balance and basic info",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "mobile": { "type": "string" },
+        "balance": { "type": "number", "description": "Current earning balance" },
+        "role": { "type": "string", "enum": ["user", "admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "balance"]
+    },
+    "Order": {
+      "title": "Payment Order",
+      "description": "Cashfree payment orders",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["PENDING", "PAID", "FAILED", "CANCELLED"] },
+        "paymentSessionId": { "type": "string" },
+        "cfOrderId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orderId", "userId", "amount", "status"]
+    },
+    "Transaction": {
+      "title": "Wallet Transaction",
+      "description": "History of all credits and debits",
+      "type": "object",
+      "properties": {
+        "txId": { "type": "string" },
+        "userId": { "type": "string" },
+        "amount": { "type": "number" },
+        "type": { "type": "string", "enum": ["DEPOSIT", "WITHDRAW", "EARN"] },
+        "status": { "type": "string", "enum": ["SUCCESS", "FAILED", "PENDING"] },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "amount", "type", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile and balance"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Payment requests"
+    },
+    "/users/{userId}/transactions/{txId}": {
+      "schema": "Transaction",
+      "description": "User wallet history"
+    }
+  }
+}
