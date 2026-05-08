@@ -3,16 +3,6 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/
 import { getFirestore, doc, getDoc, setDoc, getDocFromServer } from 'firebase/firestore';
 import firebaseConfig from '../../firebase-applet-config.json';
 
-// Suppress known noisy firebase connection errors in the console
-const originalConsoleError = console.error;
-console.error = (...args) => {
-  const msg = args.join(' ');
-  if (msg.includes('@firebase/firestore') || msg.includes('Could not reach Cloud Firestore backend')) {
-    return;
-  }
-  originalConsoleError(...args);
-};
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
@@ -32,7 +22,7 @@ async function testConnection() {
     }
   }
 }
-// testConnection(); // Commented out to prevent verbose @firebase/firestore console errors.
+testConnection();
 
 export interface FirestoreErrorInfo {
   error: string;
